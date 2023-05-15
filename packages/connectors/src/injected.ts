@@ -237,6 +237,10 @@ export class InjectedConnector extends Connector<
           ?.originalError?.code === 4902
       ) {
         try {
+	  console.log("wagmi addChain");
+	  console.log("wagmi chainId:", id);
+	  console.log("wagmi chainName:", chain.name);
+	  console.log("wagmi nativeCurrency:", chain.nativeCurrency);
           await provider.request({
             method: 'wallet_addEthereumChain',
             params: [
@@ -251,17 +255,21 @@ export class InjectedConnector extends Connector<
           })
 
           const currentChainId = await this.getChainId()
+	  console.log("awgmi currentChainId:", currentChainId);
           if (currentChainId !== chainId)
+	    console.log("awgmi currentChainId != currentChainId");
             throw new UserRejectedRequestError(
               new Error('User rejected switch after adding network.'),
             )
 
           return chain
         } catch (error) {
+	  console.log("addChain exception");
           throw new UserRejectedRequestError(error as Error)
         }
       }
 
+      console.log("wagmi error:", error);
       if (this.isUserRejectedRequestError(error))
         throw new UserRejectedRequestError(error as Error)
       throw new SwitchChainError(error as Error)
